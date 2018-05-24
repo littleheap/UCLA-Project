@@ -5,7 +5,7 @@ import pandas as pd
 '''
     PaviaU
 '''
-data = pd.read_csv('../dataset/PaviaU.csv', header=None)
+data = pd.read_csv('../dataset/PaviaU_gt_band.csv', header=None)
 data = data.as_matrix()
 
 # 获取特征矩阵

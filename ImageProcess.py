@@ -3,7 +3,7 @@ import matplotlib.image as mpimg
 from sklearn.decomposition import PCA
 import scipy.io as sio
 import numpy as np
-import functions
+import Functions
 
 '''
     《费城》照片处理

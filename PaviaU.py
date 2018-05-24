@@ -126,7 +126,7 @@ new_data = np.column_stack((data_content, data_label))
 # 将全新标准化矩阵转化为CSV行列阵格式
 new_data = pd.DataFrame(new_data)
 # 存储行列阵
-# new_data.to_csv('./dataset/PaviaU.csv', header=False, index=False)
+# new_data.to_csv('./dataset/PaviaU_gt_band.csv', header=False, index=False)
 
 '''
     ###############################################
@@ -138,7 +138,7 @@ new_data = pd.DataFrame(new_data)
     训练模型并存储模型
 '''
 # 导入数据集切割训练与测试数据
-data = pd.read_csv('./dataset/PaviaU.csv', header=None)
+data = pd.read_csv('./dataset/PaviaU_gt_band.csv', header=None)
 data = data.as_matrix()
 
 # 获取特征矩阵
