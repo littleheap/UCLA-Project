@@ -127,6 +127,7 @@ data_label = data[:, -2]
 # 获取位置矩阵
 data_loc = data[:, -1]
 
+
 # 计算正确率
 def show_accuracy(a, b, tip):
     acc = a.ravel() == b.ravel()
@@ -362,4 +363,4 @@ cv2.waitKey(0)
 cv2.destroyAllWindows()
 
 # 存储图片
-cv2.imwrite('./images/paviaU_gt_WrongClass_.png', single_merged)
+cv2.imwrite('./images/paviaU_gt_WrongClass_multicolor.png', single_merged)
