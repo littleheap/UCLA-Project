@@ -4,10 +4,29 @@ import pandas as pd
 from scipy.io import loadmat
 from sklearn.model_selection import train_test_split
 
-a = [1, 2, 3]
-b = [4, 5, 6]
+s = {1,2,3,4,5}
+print(1 in s)
+s.add(1)
 
-print(float(12.0) * 100)
+print(s)
+print(6 in s)
 
-new_acc = '%.4f' % ((42776 - 4000 + 500) / 42776)
-print('新正确率：', float(new_acc), '%')  # 0.9700（提升了1%）
+def r():
+    if 1==1:
+        return True,True,True,True
+    else:
+        return 1,2,3,4
+
+a,b,c,d = r()
+print(a)
+
+p = True
+
+if not p:
+    print('aaaa')
+
+s = {1,2,3,4}
+s.remove(1)
+print(list(s))
+
+print('qwe' == 'qw1')
