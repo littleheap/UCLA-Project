@@ -127,7 +127,7 @@ print(len(dic_band))  # 42776
 # print(dic_band)
 
 # 修正错误分类过程中，成功更改的像素
-change_list = list()
+change_list = set()
 
 # 记录当前连通的错误分类像素区域坐标
 union_set = set()
@@ -136,6 +136,7 @@ union_set = set()
 unionbound_set = set()
 
 flag = ''
+
 
 # 连通区域递归函数
 def mani(loc, flag):
@@ -167,18 +168,14 @@ def mani(loc, flag):
     if up_loc not in pavia_gt_loc or down_loc not in pavia_gt_loc or left_loc not in pavia_gt_loc or right_loc not in pavia_gt_loc:
         return
     # 将当前像素上下左右四个坐标放入包围边缘集合
-    unionbound_set.add(up_loc)
-    unionbound_set.add(down_loc)
-    unionbound_set.add(left_loc)
-    unionbound_set.add(right_loc)
-    if flag == 'up':
-        unionbound_set.remove(down_loc)
-    if flag == 'down':
-        unionbound_set.remove(up_loc)
-    if flag == 'left':
-        unionbound_set.remove(right_loc)
-    if flag == 'right':
-        unionbound_set.remove(left_loc)
+    if up_loc not in union_set:
+        unionbound_set.add(up_loc)
+    if down_loc not in union_set:
+        unionbound_set.add(down_loc)
+    if left_loc not in union_set:
+        unionbound_set.add(left_loc)
+    if right_loc not in union_set:
+        unionbound_set.add(right_loc)
     # 判断上下左右是否存在错误连通区域
     if up_loc in wrong_loc:
         # 在错误的连通区域内，则将其添加入连通区域集合
@@ -210,7 +207,8 @@ def mani(loc, flag):
     if len(classes) == 1:
         for piexl in union_set:
             # 将每一个连通区域的像素添加入更改的列表
-            change_list.append(piexl)
+            change_list.add(piexl)
+
 
 # 字典转换为列表
 wrong_loc_list = list(wrong_loc)
@@ -227,8 +225,8 @@ for i in range(iter_times):
         unionbound_set.clear()
 
 new_acc = '%.4f' % ((42776 - iter_times + len(change_list)) / 42776)
-print('新正确率：', float(new_acc) * 100, '%')  # 98.92 %（又提升了2%）
-print(len(change_list))  # 1165
+print('新正确率：', float(new_acc) * 100, '%')  # 98.38 %（又提升了1%）
+print(len(change_list))  # 934
 print(change_list)
 
 time_end = time.time()
@@ -256,44 +254,44 @@ for i in range(610):
     for j in range(340):
         if (output_image[i][j] == 0):
             c1[i][j] = 255
-        c2[i][j] = 255
-        c3[i][j] = 255
+            c2[i][j] = 255
+            c3[i][j] = 255
         if (output_image[i][j] == 1):
             c1[i][j] = 0
-        c2[i][j] = 255
-        c3[i][j] = 255
+            c2[i][j] = 255
+            c3[i][j] = 255
         if (output_image[i][j] == 2):
             c1[i][j] = 0
-        c2[i][j] = 255
-        c3[i][j] = 255
+            c2[i][j] = 255
+            c3[i][j] = 255
         if (output_image[i][j] == 3):
             c1[i][j] = 0
-        c2[i][j] = 255
-        c3[i][j] = 255
+            c2[i][j] = 255
+            c3[i][j] = 255
         if (output_image[i][j] == 4):
             c1[i][j] = 0
-        c2[i][j] = 255
-        c3[i][j] = 255
+            c2[i][j] = 255
+            c3[i][j] = 255
         if (output_image[i][j] == 5):
             c1[i][j] = 0
-        c2[i][j] = 255
-        c3[i][j] = 255
+            c2[i][j] = 255
+            c3[i][j] = 255
         if (output_image[i][j] == 6):
             c1[i][j] = 0
-        c2[i][j] = 255
-        c3[i][j] = 255
+            c2[i][j] = 255
+            c3[i][j] = 255
         if (output_image[i][j] == 7):
             c1[i][j] = 0
-        c2[i][j] = 255
-        c3[i][j] = 255
+            c2[i][j] = 255
+            c3[i][j] = 255
         if (output_image[i][j] == 8):
             c1[i][j] = 0
-        c2[i][j] = 255
-        c3[i][j] = 255
+            c2[i][j] = 255
+            c3[i][j] = 255
         if (output_image[i][j] == 9):
             c1[i][j] = 0
-        c2[i][j] = 255
-        c3[i][j] = 255
+            c2[i][j] = 255
+            c3[i][j] = 255
 
 # 将错误分类坐标用红色标记
 for value in temp_wrong_loc:
@@ -322,4 +320,21 @@ cv2.waitKey(0)
 cv2.destroyAllWindows()
 
 # 存储图片
-cv2.imwrite('./images/paviaU_gt_Rvolution_2.png', single_merged)
+cv2.imwrite('./images/paviaU_gt_Rvolution_2-1.png', single_merged)
+
+# 将更正的分类坐标重新用黄色标记
+for value in change_list:
+    j = int(value % 340)
+    i = int(value // 340)
+    c1[i][j] = 0
+    c2[i][j] = 255
+    c3[i][j] = 255
+
+# 合并三个通道，组成三通道RGB图片
+single_merged = cv2.merge([c1, c2, c3])
+
+# 显示图片
+cv2.imshow("output", single_merged)
+
+# 存储图片
+cv2.imwrite('./images/paviaU_gt_Rvolution_2-2.png', single_merged)

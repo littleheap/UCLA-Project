@@ -174,9 +174,9 @@ time_end = time.time()
 print('totally cost', time_end - time_start)
 
 ''' 
-    #######
-    开始画图
-    #######
+    #####################################################
+    单颜色画图并将错误的分类像素标记paviaU_gt_WrongClass.png
+    #####################################################
 '''
 
 # # 读取标记图片paviaU_gt
@@ -256,10 +256,10 @@ print('totally cost', time_end - time_start)
 # # 存储图片
 # cv2.imwrite('./images/paviaU_gt_WrongClass.png', single_merged)
 
-'''
-    #######
-    开始画图
-    #######
+''' 
+    ################################################################
+    多颜色画图并将错误的分类像素标记paviaU_gt_WrongClass_multicolor.png
+    ################################################################
 '''
 # 导入gt数据集
 pavia_gt = pd.read_csv('./dataset/PaviaU_gt_band_label_loc.csv', header=None)
