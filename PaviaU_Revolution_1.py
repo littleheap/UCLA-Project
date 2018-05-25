@@ -250,4 +250,4 @@ cv2.waitKey(0)
 cv2.destroyAllWindows()
 
 # 存储图片
-cv2.imwrite('./images/paviaU_gt_Rvolution.png', single_merged)
+cv2.imwrite('./images/paviaU_gt_Rvolution_1.png', single_merged)
