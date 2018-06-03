@@ -1,9 +1,5 @@
-import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 from sklearn.decomposition import PCA
-import scipy.io as sio
-import numpy as np
-import Functions
 
 '''
     《费城》照片处理
