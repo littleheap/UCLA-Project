@@ -1,10 +1,15 @@
 from sklearn.decomposition import PCA
 import numpy as np
-import matplotlib.pyplot as plt
-import pandas as pd
 
+'''
+    通过造数据测试PCA数据降维，并实现PCA函数
+'''
+
+'''
+    Test 1：库函数
+'''
 X = np.array([[-1, -1], [-2, -1], [-3, -2], [1, 1], [2, 1], [3, 2]])
-print(X)
+# print(X)
 
 # n_components：保留的特征数，默认为1如果设置成mle，会自动确定保留的特征数
 pca = PCA(n_components=1)
@@ -16,6 +21,9 @@ pca = PCA(n_components='mle')
 new_X = pca.fit_transform(X)
 # print(new_X)
 
+'''
+    Test 2：库函数
+'''
 # 12条数据分别分布在（1,1）,（2,2）,（3,3）,（4,4）四个点周围，可以看做4类
 data = np.array([[1., 1.],
                  [0.9, 0.95],
@@ -30,18 +38,24 @@ data = np.array([[1., 1.],
                  [4.06, 4.02],
                  [3.97, 4.01]])
 
-pca = PCA(n_components=1)
+pca = PCA(n_components='mle')
 new_data = pca.fit_transform(data)
-print(new_data)
+# print(new_data)
+
+'''
+    Test 3：代码实现
+'''
 
 
 def pca_(dataMat, n):
     # 求数据矩阵每一列的均值
     meanVals = np.mean(dataMat, axis=0)
+    # print(meanVals)
     # 数据矩阵每一列特征减去该列的特征均值
     meanRemoved = dataMat - meanVals
     # 计算协方差矩阵，除数n-1是为了得到协方差的无偏估计
     covMat = np.cov(meanRemoved.transpose())
+    # print(covMat)
     # 计算协方差矩阵的特征值及对应的特征向量
     eigVals, eigVects = np.linalg.eig(np.mat(covMat))
     # sort():对特征值矩阵排序(由小到大)
@@ -59,4 +73,6 @@ def pca_(dataMat, n):
 
 
 # print(pca(X, 1))
-# print(pca(data, 1))
+
+new_data = pca_(data, 1)
+# print(new_data)
