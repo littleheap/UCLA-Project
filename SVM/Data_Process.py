@@ -1,14 +1,14 @@
-# 读取原始图片paviaU
 import numpy as np
 import pandas as pd
 from scipy.io import loadmat
 from sklearn import preprocessing
 
-input_image = loadmat('./dataset/PaviaU.mat')['paviaU']
-output_image = loadmat('./dataset/PaviaU_gt.mat')['paviaU_gt']  # (610, 340)
+# 读取原始图片paviaU
+input_image = loadmat('../dataset/PaviaU.mat')['paviaU']
+output_image = loadmat('../dataset/PaviaU_gt.mat')['paviaU_gt']  # (610, 340)
 
 '''
-    PaviaU_band.csv
+    PaviaU_band.csv：将(610, 340, 103)原始三维矩阵转化为二维矩阵(207400, 103)
 '''
 # band = []
 # for i in range(610):
@@ -22,7 +22,7 @@ output_image = loadmat('./dataset/PaviaU_gt.mat')['paviaU_gt']  # (610, 340)
 # band.to_csv('./dataset/PaviaU_band.csv', header=False, index=False)
 
 '''
-    PaviaU_band_label_loc.csv
+    PaviaU_band_label_loc.csv：比上面附加上label和像素位置序号两个信息
 '''
 # label = np.zeros([610, 340])
 # for i in range(610):
@@ -110,7 +110,7 @@ data = list()
 
 for row in pavia:
     row_loc = int(row[-1])
-    if(row_loc in pavia_gt_loc):
+    if (row_loc in pavia_gt_loc):
         data.append(row)
         i = i + 1
 

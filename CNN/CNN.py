@@ -1,26 +1,26 @@
 import tensorflow as tf
 from tensorflow.examples.tutorials.mnist import input_data
 
-# mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
+mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
 
-# print("Train data size:", mnist.train.num_examples)  # Train data size: 55000
-# print("Test data size:", mnist.test.num_examples)  # Test data size: 10000
+print("Train data size:", mnist.train.num_examples)  # Train data size: 55000
+print("Test data size:", mnist.test.num_examples)  # Test data size: 10000
 
 # 每个批次的大小
 batch_size = 100
 
 
 # 计算一共有多少个训练批次
-# n_batch = mnist.train.num_examples // batch_size  # 550
+n_batch = mnist.train.num_examples // batch_size  # 550
 
-# batch_xs, batch_ys = mnist.train.next_batch(batch_size)
+batch_xs, batch_ys = mnist.train.next_batch(batch_size)
 
-# print(batch_xs)
-# print(batch_xs.shape)  # (100, 784)
-# print(batch_ys)
-# print(batch_ys.shape)  # (100, 10)
+print(batch_xs)
+print(batch_xs.shape)  # (100, 784)
+print(batch_ys)
+print(batch_ys.shape)  # (100, 10)
 
-# onehot转换函数
+# onehot函数
 def onehot(labels, length):
     sess = tf.Session()
     batch_size = tf.size(labels)  # 5
@@ -28,10 +28,10 @@ def onehot(labels, length):
     indices = tf.expand_dims(tf.range(0, batch_size, 1), 1)
     concated = tf.concat([indices, labels], 1)
     onehot_labels = tf.sparse_to_dense(concated, tf.stack([batch_size, length]), 1.0, 0.0)
-    print(sess.run(onehot_labels))
+    # print(sess.run(onehot_labels))
     return onehot_labels
 
-onehot([1, 3, 5, 7, 9], 10)
+# onehot([1, 3, 5, 7, 9], 10)
 '''
     [[0. 1. 0. 0. 0. 0. 0. 0. 0. 0.]
      [0. 0. 0. 1. 0. 0. 0. 0. 0. 0.]
@@ -206,6 +206,6 @@ with tf.name_scope('accuracy'):
 #         for batch in range(n_batch):
 #             # 训练模型
 #             batch_xs, batch_ys = mnist.train.next_batch(batch_size)
-#             sess.run(train_step, feed_dict={x: batch_xs, y: batch_ys, keep_prob: 0.6})  # 此处可以更改dropout值
+#             sess.run(train_step, feed_dict={x: batch_xs, y: batch_ys, keep_prob: 0.6})  # dropout比例
 #         test_acc = sess.run(accuracy, feed_dict={x: mnist.test.images, y: mnist.test.labels, keep_prob: 1.0})
 #         print("Training Times：" + str(i) + " , Testing Accuracy = " + str(test_acc))
