@@ -67,4 +67,4 @@ for i in range(10):
 
 new_data = pd.DataFrame(data)
 print(new_data.shape)
-new_data.to_csv('./dataset/CNN_data.csv', header=False, index=False)
+new_data.to_csv('../dataset/CNN_data.csv', header=False, index=False)
