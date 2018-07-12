@@ -9,7 +9,6 @@ print("Test data size:", mnist.test.num_examples)  # Test data size: 10000
 # 每个批次的大小
 batch_size = 100
 
-
 # 计算一共有多少个训练批次
 n_batch = mnist.train.num_examples // batch_size  # 550
 
@@ -19,6 +18,7 @@ print(batch_xs)
 print(batch_xs.shape)  # (100, 784)
 print(batch_ys)
 print(batch_ys.shape)  # (100, 10)
+
 
 # onehot函数
 def onehot(labels, length):
@@ -30,6 +30,7 @@ def onehot(labels, length):
     onehot_labels = tf.sparse_to_dense(concated, tf.stack([batch_size, length]), 1.0, 0.0)
     # print(sess.run(onehot_labels))
     return onehot_labels
+
 
 # onehot([1, 3, 5, 7, 9], 10)
 '''
