@@ -19,7 +19,7 @@ output_image = loadmat('../dataset/PaviaU_gt.mat')['paviaU_gt']  # (610, 340)
 # print(band.shape)  # (207400, 103)
 # band = preprocessing.StandardScaler().fit_transform(band[:, :])
 # band = pd.DataFrame(band)
-# band.to_csv('./dataset/PaviaU_band.csv', header=False, index=False)
+# band.to_csv('../dataset/PaviaU_band.csv', header=False, index=False)
 
 '''
     PaviaU_band_label_loc.csv：比上面附加上label和像素位置序号两个信息
@@ -47,7 +47,7 @@ output_image = loadmat('../dataset/PaviaU_gt.mat')['paviaU_gt']  # (610, 340)
 # new_data = np.column_stack((data_content, data_label))
 # new_data = np.column_stack((new_data, data_loc))
 # new_data = pd.DataFrame(new_data)
-# new_data.to_csv('./dataset/PaviaU_band_label_loc.csv', header=False, index=False)
+# new_data.to_csv('../dataset/PaviaU_band_label_loc.csv', header=False, index=False)
 
 '''
     PaviaU_gt_band_label_loc
@@ -84,7 +84,7 @@ output_image = loadmat('../dataset/PaviaU_gt.mat')['paviaU_gt']  # (610, 340)
     PaviaU_gt_band_label_loc_：与上面的不同，此数据的标准化是在全部数据标准化后抽取出来的
 '''
 # 导入gt数据集
-pavia_gt = pd.read_csv('./dataset/PaviaU_gt_band_label_loc.csv', header=None)
+pavia_gt = pd.read_csv('../dataset/PaviaU_gt_band_label_loc.csv', header=None)
 pavia_gt = pavia_gt.as_matrix()
 # 获取特征矩阵
 pavia_gt_content = pavia_gt[:, :-2]
@@ -116,4 +116,4 @@ for row in pavia:
 
 new_data = pd.DataFrame(data)
 print(new_data.shape)
-new_data.to_csv('./dataset/PaviaU_gt_band_label_loc_.csv', header=False, index=False)
+new_data.to_csv('../dataset/PaviaU_gt_band_label_loc_.csv', header=False, index=False)

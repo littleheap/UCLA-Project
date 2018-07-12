@@ -5,7 +5,7 @@ from sklearn.decomposition import PCA
     《费城》照片处理
 '''
 # 读取和代码处于同一目录下的图片
-image = mpimg.imread('.\dataset\image.jpg')
+image = mpimg.imread('..\dataset\image.jpg')
 
 # 此时图片就已经是一个np.array，可以对它进行任意处理
 print(image.shape)  # (2448, 3264, 3)
@@ -34,7 +34,7 @@ print(new_image.shape)
 # plt.show()
 
 '''
-data = sio.loadmat('./dataset/PaviaU.mat')
+data = sio.loadmat('../dataset/PaviaU.mat')
 
 paviaU = data['paviaU']
 

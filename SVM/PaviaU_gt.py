@@ -5,14 +5,14 @@ import cv2
     将验证集paviaU_gt中10中类别（9中分类+1个无类别背景）用不同颜色标记出来并以RGB格式图片显示
 '''
 # 读取标记图片paviaU_gt
-output_image = loadmat('./dataset/PaviaU_gt.mat')['paviaU_gt']  # (610, 340)
+output_image = loadmat('../dataset/PaviaU_gt.mat')['paviaU_gt']  # (610, 340)
 
 # 初始化个通道，用于生成新的paviaU_gt
-c1 = loadmat('./dataset/PaviaU_gt.mat')['paviaU_gt']
+c1 = loadmat('../dataset/PaviaU_gt.mat')['paviaU_gt']
 
-c2 = loadmat('./dataset/PaviaU_gt.mat')['paviaU_gt']
+c2 = loadmat('../dataset/PaviaU_gt.mat')['paviaU_gt']
 
-c3 = loadmat('./dataset/PaviaU_gt.mat')['paviaU_gt']
+c3 = loadmat('../dataset/PaviaU_gt.mat')['paviaU_gt']
 
 # 对每一种类别用一种颜色在三个通道上标记
 for i in range(610):
@@ -69,14 +69,14 @@ cv2.waitKey(0)
 cv2.destroyAllWindows()
 
 # 存储图片
-cv2.imwrite('./images/paviaU_gt.png', multi_merged)
+cv2.imwrite('../images/paviaU_gt.png', multi_merged)
 
 # 单颜色（黄色）显示标记图片
 
 # 初始化个通道，用于生成新的paviaU_gt
-c1 = loadmat('./dataset/PaviaU_gt.mat')['paviaU_gt']
+c1 = loadmat('../dataset/PaviaU_gt.mat')['paviaU_gt']
 
-c2 = loadmat('./dataset/PaviaU_gt.mat')['paviaU_gt']
+c2 = loadmat('../dataset/PaviaU_gt.mat')['paviaU_gt']
 
 c3 = loadmat('./dataset/PaviaU_gt.mat')['paviaU_gt']
 
@@ -134,4 +134,4 @@ cv2.waitKey(0)
 cv2.destroyAllWindows()
 
 # 存储图片
-cv2.imwrite('./images/paviaU_gt.png', single_merged)
+cv2.imwrite('../images/paviaU_gt.png', single_merged)

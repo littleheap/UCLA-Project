@@ -138,7 +138,7 @@ new_data = pd.DataFrame(new_data)
     训练模型并存储模型
 '''
 # 导入数据集切割训练与测试数据
-data = pd.read_csv('./dataset/PaviaU_gt_band.csv', header=None)
+data = pd.read_csv('../dataset/PaviaU_gt_band.csv', header=None)
 data = data.as_matrix()
 
 # 获取特征矩阵
@@ -197,7 +197,7 @@ def return_wrong(a, b, tip):
 # print(accuracy, '%')  # 96.29%
 #
 # # 存储模型
-# joblib.dump(model, './models/PaviaU/SVC.m')
+# joblib.dump(model, '../models/PaviaU/SVC.m')
 #
 # time_end = time.time()
 # print('totally cost', time_end - time_start)  # 20s
@@ -229,7 +229,7 @@ time_start = time.time()
 # # >>>  {'C': 100.0, 'gamma': 0.027825594022071243}
 
 # 加载模型
-model = joblib.load('./models/PaviaU/SVC_CV.m')
+model = joblib.load('../models/PaviaU/SVC_CV.m')
 
 # 预测测试集
 # pred = model.predict(data_test)
@@ -249,7 +249,7 @@ print(wrong)
 print(len(wrong))
 
 # 存储模型
-# joblib.dump(model, './models/PaviaU/SVC_CV.m')
+# joblib.dump(model, '../models/PaviaU/SVC_CV.m')
 
 time_end = time.time()
 print('totally cost', time_end - time_start)  # 4343s

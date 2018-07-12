@@ -17,13 +17,13 @@ import pandas as pd
     考虑用围棋吃子的思想，如果某一像素的上下左右全部为一个分类，则将该像素重新协同分类
 '''
 # 读取原始图片paviaU
-input_image = loadmat('./dataset/PaviaU.mat')['paviaU']
+input_image = loadmat('../dataset/PaviaU.mat')['paviaU']
 
 # 读取标记图片paviaU_gt
-output_image = loadmat('./dataset/PaviaU_gt.mat')['paviaU_gt']  # (610, 340)
+output_image = loadmat('../dataset/PaviaU_gt.mat')['paviaU_gt']  # (610, 340)
 
 # 导入gt数据集
-pavia_gt = pd.read_csv('./dataset/PaviaU_gt_band_label_loc.csv', header=None)
+pavia_gt = pd.read_csv('../dataset/PaviaU_gt_band_label_loc.csv', header=None)
 pavia_gt = pavia_gt.as_matrix()
 # 获取特征矩阵
 pavia_gt_content = pavia_gt[:, :-2]
@@ -33,7 +33,7 @@ pavia_gt_label = pavia_gt[:, -2]
 pavia_gt_loc = pavia_gt[:, -1]
 
 # 导入全部数据集
-pavia = pd.read_csv('./dataset/PaviaU_band_label_loc.csv', header=None)
+pavia = pd.read_csv('../dataset/PaviaU_band_label_loc.csv', header=None)
 pavia = pavia.as_matrix()
 # 获取通道矩阵
 pavia_content = pavia[:, :-2]
@@ -72,7 +72,7 @@ def return_wrong(a, b):
 time_start = time.time()
 
 # 加载模型
-model = joblib.load('./models/PaviaU/SVC_CV.m')
+model = joblib.load('../models/PaviaU/SVC_CV.m')
 
 # 预测gt全集
 pred = model.predict(pavia_gt_content)
@@ -168,16 +168,16 @@ print('total time：', time_end - time_start)
     #######
 '''
 # 读取标记图片paviaU_gt
-output_image = loadmat('./dataset/PaviaU_gt.mat')['paviaU_gt']  # (610, 340)
+output_image = loadmat('../dataset/PaviaU_gt.mat')['paviaU_gt']  # (610, 340)
 
 # 单颜色（黄色）显示标记图片
 
 # 初始化个通道，用于生成新的paviaU_gt
-c1 = loadmat('./dataset/PaviaU_gt.mat')['paviaU_gt']
+c1 = loadmat('../dataset/PaviaU_gt.mat')['paviaU_gt']
 
-c2 = loadmat('./dataset/PaviaU_gt.mat')['paviaU_gt']
+c2 = loadmat('../dataset/PaviaU_gt.mat')['paviaU_gt']
 
-c3 = loadmat('./dataset/PaviaU_gt.mat')['paviaU_gt']
+c3 = loadmat('../dataset/PaviaU_gt.mat')['paviaU_gt']
 
 # 现将全部分类坐标用黄色标记
 for i in range(610):
@@ -250,4 +250,4 @@ cv2.waitKey(0)
 cv2.destroyAllWindows()
 
 # 存储图片
-cv2.imwrite('./images/paviaU_gt_Rvolution_1.png', single_merged)
+cv2.imwrite('../images/paviaU_gt_Rvolution_1.png', single_merged)
