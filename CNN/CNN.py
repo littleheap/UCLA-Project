@@ -19,29 +19,6 @@ print(batch_xs.shape)  # (100, 784)
 print(batch_ys)
 print(batch_ys.shape)  # (100, 10)
 
-
-# onehot函数
-def onehot(labels, length):
-    sess = tf.Session()
-    batch_size = tf.size(labels)  # 5
-    labels = tf.expand_dims(labels, 1)
-    indices = tf.expand_dims(tf.range(0, batch_size, 1), 1)
-    concated = tf.concat([indices, labels], 1)
-    onehot_labels = tf.sparse_to_dense(concated, tf.stack([batch_size, length]), 1.0, 0.0)
-    # print(sess.run(onehot_labels))
-    return onehot_labels
-
-
-# onehot([1, 3, 5, 7, 9], 10)
-'''
-    [[0. 1. 0. 0. 0. 0. 0. 0. 0. 0.]
-     [0. 0. 0. 1. 0. 0. 0. 0. 0. 0.]
-     [0. 0. 0. 0. 0. 1. 0. 0. 0. 0.]
-     [0. 0. 0. 0. 0. 0. 0. 1. 0. 0.]
-     [0. 0. 0. 0. 0. 0. 0. 0. 0. 1.]]
-'''
-
-
 # 参数概要
 def variable_summaries(var):
     with tf.name_scope('summaries'):
