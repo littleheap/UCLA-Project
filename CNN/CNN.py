@@ -1,29 +1,17 @@
 import random
 import pandas as pd
 import tensorflow as tf
-from tensorflow.examples.tutorials.mnist import input_data
 
-mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
-
-print("Train data size:", mnist.train.num_examples)  # Train data size: 55000
-print("Test data size:", mnist.test.num_examples)  # Test data size: 10000
-
+'''
+    实现基础CNN网络
+'''
 # 每个批次的大小
 batch_size = 100
 
-# 计算一共有多少个训练批次
-n_batch = mnist.train.num_examples // batch_size  # 550
+# 计算一共有多少个训练批次遍历一次训练集
+n_batch = 1800 // batch_size  # 18
 
-batch_xs, batch_ys = mnist.train.next_batch(batch_size)
-
-# print(batch_xs)
-# print(batch_xs.shape)  # (100, 784)
-# print(batch_ys)
-# print(batch_ys.shape)  # (100, 10)
-
-########################################################################
-
-# 制作1800全集验证集
+# 制作1800全集验证集，此处与测试集取同
 # 获取特征矩阵
 data_band_test = pd.read_csv('./dataset/CNN_data_shuffle.csv', header=None)
 data_band_test = data_band_test.as_matrix()
@@ -34,6 +22,8 @@ data_band_test = data_band_test[:, :100]
 # 获取标记onehot矩阵
 data_label_test = pd.read_csv('./dataset/CNN_data_shuffle_onehot_label.csv', header=None)
 data_label_test = data_label_test.as_matrix()
+
+
 # print(data_label_check.shape)  # (1800, 10)
 
 
@@ -220,6 +210,8 @@ data_band = data_band[:, :-1]
 # 获取标记onehot矩阵
 data_label = pd.read_csv('./dataset/CNN_data_shuffle_onehot_label.csv', header=None)
 data_label = data_label.as_matrix()
+
+
 # print(data_label.shape)  # (1800, 10)
 
 
@@ -234,6 +226,7 @@ def get_random_100():
     # print(len(random_100))
     return random_100
 
+
 with tf.Session() as sess:
     sess.run(tf.global_variables_initializer())
     for i in range(21):
@@ -246,3 +239,27 @@ with tf.Session() as sess:
             sess.run(train_step, feed_dict={x: batch_xs, y: batch_ys, keep_prob: 0.8})  # dropout比例
         test_acc = sess.run(accuracy, feed_dict={x: data_band_test, y: data_label_test, keep_prob: 1.0})
         print("Training Times：" + str(i) + " , Testing Accuracy = " + str(test_acc))
+
+'''
+Training Times：0 , Testing Accuracy = 0.66055554
+Training Times：1 , Testing Accuracy = 0.70944446
+Training Times：2 , Testing Accuracy = 0.7738889
+Training Times：3 , Testing Accuracy = 0.79
+Training Times：4 , Testing Accuracy = 0.81333333
+Training Times：5 , Testing Accuracy = 0.8283333
+Training Times：6 , Testing Accuracy = 0.9433333
+Training Times：7 , Testing Accuracy = 0.93833333
+Training Times：8 , Testing Accuracy = 0.95555556
+Training Times：9 , Testing Accuracy = 0.96
+Training Times：10 , Testing Accuracy = 0.95111114
+Training Times：11 , Testing Accuracy = 0.95944446
+Training Times：12 , Testing Accuracy = 0.9661111
+Training Times：13 , Testing Accuracy = 0.9672222
+Training Times：14 , Testing Accuracy = 0.96944445
+Training Times：15 , Testing Accuracy = 0.97
+Training Times：16 , Testing Accuracy = 0.97055554
+Training Times：17 , Testing Accuracy = 0.97
+Training Times：18 , Testing Accuracy = 0.9766667
+Training Times：19 , Testing Accuracy = 0.975
+Training Times：20 , Testing Accuracy = 0.9772222
+'''
