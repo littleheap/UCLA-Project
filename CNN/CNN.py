@@ -17,14 +17,14 @@ data_band_test = pd.read_csv('./dataset/CNN_data_shuffle.csv', header=None)
 data_band_test = data_band_test.as_matrix()
 data_band_test = data_band_test[:, :-1]
 data_band_test = data_band_test[:, :100]
-# print(data_band_check.shape)  # (1800, 100)
+# print(data_band_test.shape)  # (1800, 100)
 
 # 获取标记onehot矩阵
 data_label_test = pd.read_csv('./dataset/CNN_data_shuffle_onehot_label.csv', header=None)
 data_label_test = data_label_test.as_matrix()
 
 
-# print(data_label_check.shape)  # (1800, 10)
+# print(data_label_test.shape)  # (1800, 10)
 
 
 # 参数概要
@@ -116,8 +116,10 @@ with tf.name_scope('Conv1'):
     # 初始化第一层的W和b
     with tf.name_scope('W_conv1'):
         W_conv1 = weight_variable([2, 2, 1, 32], name='W_conv1')  # 2*2的采样窗口，32个卷积核从1个平面抽取特征
+        variable_summaries(W_conv1)
     with tf.name_scope('b_conv1'):
         b_conv1 = bias_variable([32], name='b_conv1')  # 每一个卷积核一个偏置值
+        variable_summaries(b_conv1)
 
     # 把x_image和权值向量进行卷积，再加上偏置值，然后应用于relu激活函数
     with tf.name_scope('conv2d_1'):
@@ -132,8 +134,10 @@ with tf.name_scope('Conv2'):
     # 初始化第二个卷积层的权值和偏置
     with tf.name_scope('W_conv2'):
         W_conv2 = weight_variable([2, 2, 32, 64], name='W_conv2')  # 2*2的采样窗口，64个卷积核从32个平面抽取特征
+        variable_summaries(W_conv2)
     with tf.name_scope('b_conv2'):
         b_conv2 = bias_variable([64], name='b_conv2')  # 每一个卷积核一个偏置值
+        variable_summaries(b_conv2)
 
     # 把h_pool1和权值向量进行卷积，再加上偏置值，然后应用于relu激活函数
     with tf.name_scope('conv2d_2'):
@@ -151,8 +155,10 @@ with tf.name_scope('fc1'):
     # 初始化第一个全连接层的权值
     with tf.name_scope('W_fc1'):
         W_fc1 = weight_variable([4 * 4 * 64, 1024], name='W_fc1')  # 输入层有4*4*64个列的属性，全连接层有1024个隐藏神经元
+        variable_summaries(W_fc1)
     with tf.name_scope('b_fc1'):
         b_fc1 = bias_variable([1024], name='b_fc1')  # 1024个节点
+        variable_summaries(b_fc1)
 
     # 把第二层的输出扁平化为1维，-1代表任意值
     with tf.name_scope('h_pool2_flat'):
@@ -173,8 +179,10 @@ with tf.name_scope('fc2'):
     # 初始化第二个全连接层
     with tf.name_scope('W_fc2'):
         W_fc2 = weight_variable([1024, 10], name='W_fc2')  # 输入为1024个隐藏层神经元，输出层为10个数字可能结果
+        variable_summaries(W_fc2)
     with tf.name_scope('b_fc2'):
         b_fc2 = bias_variable([10], name='b_fc2')
+        variable_summaries(b_fc2)
     with tf.name_scope('wx_plus_b2'):
         wx_plus_b2 = tf.matmul(h_fc1_drop, W_fc2) + b_fc2
     with tf.name_scope('softmax'):
@@ -227,39 +235,39 @@ def get_random_100():
     return random_100
 
 
+# 初始化变量
+init = tf.global_variables_initializer()
+
+# 合并所有的Summary
+merge = tf.summary.merge_all()
+
 with tf.Session() as sess:
-    sess.run(tf.global_variables_initializer())
-    for i in range(21):
+    sess.run(init)
+    # 将图写入制定目录
+    writer = tf.summary.FileWriter('./logs/', sess.graph)
+    for i in range(801):
         for batch in range(n_batch):
             # 训练模型
             random_100 = get_random_100()
             batch_xs = data_band[random_100][:, :100]
             batch_ys = data_label[random_100]
-            # batch_xs, batch_ys = mnist.train.next_batch(batch_size)
-            sess.run(train_step, feed_dict={x: batch_xs, y: batch_ys, keep_prob: 0.8})  # dropout比例
+            summary, _ = sess.run([merge, train_step],
+                                  feed_dict={x: batch_xs, y: batch_ys, keep_prob: 0.8})  # dropout比例
+        writer.add_summary(summary, i)
         test_acc = sess.run(accuracy, feed_dict={x: data_band_test, y: data_label_test, keep_prob: 1.0})
         print("Training Times：" + str(i) + " , Testing Accuracy = " + str(test_acc))
 
 '''
-Training Times：0 , Testing Accuracy = 0.66055554
-Training Times：1 , Testing Accuracy = 0.70944446
-Training Times：2 , Testing Accuracy = 0.7738889
-Training Times：3 , Testing Accuracy = 0.79
-Training Times：4 , Testing Accuracy = 0.81333333
-Training Times：5 , Testing Accuracy = 0.8283333
-Training Times：6 , Testing Accuracy = 0.9433333
-Training Times：7 , Testing Accuracy = 0.93833333
-Training Times：8 , Testing Accuracy = 0.95555556
-Training Times：9 , Testing Accuracy = 0.96
-Training Times：10 , Testing Accuracy = 0.95111114
-Training Times：11 , Testing Accuracy = 0.95944446
-Training Times：12 , Testing Accuracy = 0.9661111
-Training Times：13 , Testing Accuracy = 0.9672222
-Training Times：14 , Testing Accuracy = 0.96944445
-Training Times：15 , Testing Accuracy = 0.97
-Training Times：16 , Testing Accuracy = 0.97055554
-Training Times：17 , Testing Accuracy = 0.97
-Training Times：18 , Testing Accuracy = 0.9766667
-Training Times：19 , Testing Accuracy = 0.975
-Training Times：20 , Testing Accuracy = 0.9772222
+    ...
+    Training Times：790 , Testing Accuracy = 0.98777777
+    Training Times：791 , Testing Accuracy = 0.985
+    Training Times：792 , Testing Accuracy = 0.9866667
+    Training Times：793 , Testing Accuracy = 0.9855555
+    Training Times：794 , Testing Accuracy = 0.9866667
+    Training Times：795 , Testing Accuracy = 0.98777777
+    Training Times：796 , Testing Accuracy = 0.98444444
+    Training Times：797 , Testing Accuracy = 0.98333335
+    Training Times：798 , Testing Accuracy = 0.98055553
+    Training Times：799 , Testing Accuracy = 0.9855555
+    Training Times：800 , Testing Accuracy = 0.9872222
 '''
