@@ -153,9 +153,40 @@ onehot_csv.to_csv('./dataset/CNN_data_shuffle_onehot_label.csv', header=False, i
 '''
     4.分别按批次读取通道数据和onehot标记数据过程操作
 '''
+# 获取特征矩阵
 data_band = pd.read_csv('./dataset/CNN_data_shuffle.csv', header=None)
 data_band = data_band.as_matrix()
-
-# 获取特征矩阵
 data_band = data_band[:, :-1]
 print(data_band.shape)  # (1800, 103)
+
+# 获取标记onehot矩阵
+data_label = pd.read_csv('./dataset/CNN_data_shuffle_onehot_label.csv', header=None)
+data_label = data_label.as_matrix()
+print(data_label.shape)  # (1800, 10)
+
+
+# 获取0-1800之间100个随机数用于选取训练集batch
+def get_random_100():
+    random_100 = []
+    while (len(random_100) < 100):
+        x = random.randint(0, 1799)
+        if x not in random_100:
+            random_100.append(x)
+    # print(random_100)
+    # print(len(random_100))
+    return random_100
+
+
+random_100 = get_random_100()
+data_band_batch_100 = data_band[random_100]
+data_label_batch_100 = data_label[random_100]
+
+# print(data_band_batch_100)
+# print(data_band_batch_100.shape)  # (100, 103)
+
+# 取前100个通道，方便输入网络
+print(data_band_batch_100[:, :100])
+print(data_band_batch_100[:, :100].shape)
+
+# print(data_label_batch_100)
+# print(data_label_batch_100.shape)  # (100, 10)

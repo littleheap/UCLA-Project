@@ -1,3 +1,5 @@
+import random
+import pandas as pd
 import tensorflow as tf
 from tensorflow.examples.tutorials.mnist import input_data
 
@@ -14,10 +16,26 @@ n_batch = mnist.train.num_examples // batch_size  # 550
 
 batch_xs, batch_ys = mnist.train.next_batch(batch_size)
 
-print(batch_xs)
-print(batch_xs.shape)  # (100, 784)
-print(batch_ys)
-print(batch_ys.shape)  # (100, 10)
+# print(batch_xs)
+# print(batch_xs.shape)  # (100, 784)
+# print(batch_ys)
+# print(batch_ys.shape)  # (100, 10)
+
+########################################################################
+
+# 制作1800全集验证集
+# 获取特征矩阵
+data_band_test = pd.read_csv('./dataset/CNN_data_shuffle.csv', header=None)
+data_band_test = data_band_test.as_matrix()
+data_band_test = data_band_test[:, :-1]
+data_band_test = data_band_test[:, :100]
+# print(data_band_check.shape)  # (1800, 100)
+
+# 获取标记onehot矩阵
+data_label_test = pd.read_csv('./dataset/CNN_data_shuffle_onehot_label.csv', header=None)
+data_label_test = data_label_test.as_matrix()
+# print(data_label_check.shape)  # (1800, 10)
+
 
 # 参数概要
 def variable_summaries(var):
@@ -61,7 +79,7 @@ def conv2d(x, W):
 
 
 # 池化层
-def max_pool_2x2(x):
+def max_pool_2x2_first(x):
     '''
     x是一个四维的tensor [batch, in_height, in_width, in_channels]
     (1)批次  (2)图片高  (3)图片宽  (4)通道数：黑白为1，彩色为3
@@ -76,23 +94,38 @@ def max_pool_2x2(x):
     return tf.nn.max_pool(x, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
 
 
+def max_pool_2x2_second(x):
+    '''
+    x是一个四维的tensor [batch, in_height, in_width, in_channels]
+    (1)批次  (2)图片高  (3)图片宽  (4)通道数：黑白为1，彩色为3
+
+    ksize是窗口大小
+    约定 ksize[0] = ksize[3] = 1，ksize[1]代表x方向的大小 , ksize[2]代表y方向的大小
+
+    约定 strides[0] = strides[3] = 1，strides[1]代表x方向的步长，strides[2]代表y方向的步长
+
+    padding= 'SAME' / 'VALID' ; SAME在外围适当补0 , VALID不填补0
+    '''
+    return tf.nn.max_pool(x, ksize=[1, 2, 2, 1], strides=[1, 1, 1, 1], padding='VALID')
+
+
 # 输入层
 with tf.name_scope('input'):
     # 定义两个placeholder
-    x = tf.placeholder(tf.float32, [None, 784], name='x-input')
+    x = tf.placeholder(tf.float32, [None, 100], name='x-input')
     y = tf.placeholder(tf.float32, [None, 10], name='y-input')
     with tf.name_scope('x_image'):
         '''
         改变x的格式转为2维的向量 [batch, in_height, in_width, in_channels] 
         (1)批次  (2)二维高  (3)二维宽  (4)通道数：黑白为1，彩色为3
         '''
-        x_image = tf.reshape(x, [-1, 28, 28, 1], name='x_image')
+        x_image = tf.reshape(x, [-1, 10, 10, 1], name='x_image')
 
 # 第一层：卷积+激活+池化
 with tf.name_scope('Conv1'):
     # 初始化第一层的W和b
     with tf.name_scope('W_conv1'):
-        W_conv1 = weight_variable([5, 5, 1, 32], name='W_conv1')  # 5*5的采样窗口，32个卷积核从1个平面抽取特征
+        W_conv1 = weight_variable([2, 2, 1, 32], name='W_conv1')  # 2*2的采样窗口，32个卷积核从1个平面抽取特征
     with tf.name_scope('b_conv1'):
         b_conv1 = bias_variable([32], name='b_conv1')  # 每一个卷积核一个偏置值
 
@@ -102,13 +135,13 @@ with tf.name_scope('Conv1'):
     with tf.name_scope('relu'):
         h_conv1 = tf.nn.relu(conv2d_1)
     with tf.name_scope('h_pool1'):
-        h_pool1 = max_pool_2x2(h_conv1)  # 进行max-pooling
+        h_pool1 = max_pool_2x2_first(h_conv1)  # 进行max-pooling
 
 # 第二层：卷积+激活+池化
 with tf.name_scope('Conv2'):
     # 初始化第二个卷积层的权值和偏置
     with tf.name_scope('W_conv2'):
-        W_conv2 = weight_variable([5, 5, 32, 64], name='W_conv2')  # 5*5的采样窗口，64个卷积核从32个平面抽取特征
+        W_conv2 = weight_variable([2, 2, 32, 64], name='W_conv2')  # 2*2的采样窗口，64个卷积核从32个平面抽取特征
     with tf.name_scope('b_conv2'):
         b_conv2 = bias_variable([64], name='b_conv2')  # 每一个卷积核一个偏置值
 
@@ -118,22 +151,22 @@ with tf.name_scope('Conv2'):
     with tf.name_scope('relu'):
         h_conv2 = tf.nn.relu(conv2d_2)
     with tf.name_scope('h_pool2'):
-        h_pool2 = max_pool_2x2(h_conv2)  # 进行max-pooling
+        h_pool2 = max_pool_2x2_second(h_conv2)  # 进行max-pooling
 
-# 28*28的图片第一次卷积后还是28*28，第一次池化后变为14*14
-# 第二次卷积后为14*14，第二次池化后变为了7*7
-# 进过上面操作后得到64张7*7的平面
+# 10*10的图片第一次卷积后还是10*10，第一次池化后变为5*5
+# 第二次卷积后为5*5，第二次池化后变为了4*4
+# 进过上面操作后得到64张4*4的平面
 
 with tf.name_scope('fc1'):
     # 初始化第一个全连接层的权值
     with tf.name_scope('W_fc1'):
-        W_fc1 = weight_variable([7 * 7 * 64, 1024], name='W_fc1')  # 输入层有7*7*64个列的属性，全连接层有1024个隐藏神经元
+        W_fc1 = weight_variable([4 * 4 * 64, 1024], name='W_fc1')  # 输入层有4*4*64个列的属性，全连接层有1024个隐藏神经元
     with tf.name_scope('b_fc1'):
         b_fc1 = bias_variable([1024], name='b_fc1')  # 1024个节点
 
     # 把第二层的输出扁平化为1维，-1代表任意值
     with tf.name_scope('h_pool2_flat'):
-        h_pool2_flat = tf.reshape(h_pool2, [-1, 7 * 7 * 64], name='h_pool2_flat')
+        h_pool2_flat = tf.reshape(h_pool2, [-1, 4 * 4 * 64], name='h_pool2_flat')
     # 求第一个全连接层的输出
     with tf.name_scope('wx_plus_b1'):
         wx_plus_b1 = tf.matmul(h_pool2_flat, W_fc1) + b_fc1
@@ -178,12 +211,38 @@ with tf.name_scope('accuracy'):
         accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
         tf.summary.scalar('accuracy', accuracy)
 
-# with tf.Session() as sess:
-#     sess.run(tf.global_variables_initializer())
-#     for i in range(21):
-#         for batch in range(n_batch):
-#             # 训练模型
-#             batch_xs, batch_ys = mnist.train.next_batch(batch_size)
-#             sess.run(train_step, feed_dict={x: batch_xs, y: batch_ys, keep_prob: 0.6})  # dropout比例
-#         test_acc = sess.run(accuracy, feed_dict={x: mnist.test.images, y: mnist.test.labels, keep_prob: 1.0})
-#         print("Training Times：" + str(i) + " , Testing Accuracy = " + str(test_acc))
+# 获取特征矩阵
+data_band = pd.read_csv('./dataset/CNN_data_shuffle.csv', header=None)
+data_band = data_band.as_matrix()
+data_band = data_band[:, :-1]
+# print(data_band.shape)  # (1800, 103)
+
+# 获取标记onehot矩阵
+data_label = pd.read_csv('./dataset/CNN_data_shuffle_onehot_label.csv', header=None)
+data_label = data_label.as_matrix()
+# print(data_label.shape)  # (1800, 10)
+
+
+# 获取0-1800之间100个随机数用于选取训练集batch
+def get_random_100():
+    random_100 = []
+    while (len(random_100) < 100):
+        x = random.randint(0, 1799)
+        if x not in random_100:
+            random_100.append(x)
+    # print(random_100)
+    # print(len(random_100))
+    return random_100
+
+with tf.Session() as sess:
+    sess.run(tf.global_variables_initializer())
+    for i in range(21):
+        for batch in range(n_batch):
+            # 训练模型
+            random_100 = get_random_100()
+            batch_xs = data_band[random_100][:, :100]
+            batch_ys = data_label[random_100]
+            # batch_xs, batch_ys = mnist.train.next_batch(batch_size)
+            sess.run(train_step, feed_dict={x: batch_xs, y: batch_ys, keep_prob: 0.8})  # dropout比例
+        test_acc = sess.run(accuracy, feed_dict={x: data_band_test, y: data_label_test, keep_prob: 1.0})
+        print("Training Times：" + str(i) + " , Testing Accuracy = " + str(test_acc))
