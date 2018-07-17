@@ -1,17 +1,5 @@
 import random
-from functools import reduce
-import matplotlib.pyplot as plt
-import time
-from scipy.io import *
-import spectral
-from spectral import *
-import joblib
-from sklearn.model_selection import *
-import numpy as np
-from sklearn.svm import SVC
-from sklearn import *
 import pandas as pd
-import tensorflow as tf
 
 '''
     1.获取9个类别，每个类别200条，一共1800条数据，每条数据103通道信息+一列label，一共(1800,104)
