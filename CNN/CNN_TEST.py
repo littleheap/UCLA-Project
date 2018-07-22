@@ -157,6 +157,7 @@ with tf.Session() as sess:
     print("Testing Accuracy = " + str(test_acc))
     # >>>Testing Accuracy = 0.9855555
 
+    saver.restore(sess, 'net/CNN/CNN.ckpt')
     # 42776全集验证集
     # 获取特征矩阵
     data = pd.read_csv('../dataset/PaviaU_gt_band_label_loc_.csv', header=None)
@@ -170,3 +171,4 @@ with tf.Session() as sess:
     print(data_label_test.shape)  # (42776, 10)
     test_acc = sess.run(accuracy, feed_dict={x: data_band_test, y: data_label_test, keep_prob: 1.0})
     print("Testing Accuracy = " + str(test_acc))
+    # >>>0.5807696
