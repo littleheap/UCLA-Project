@@ -248,10 +248,13 @@ init = tf.global_variables_initializer()
 # 合并所有的Summary
 merge = tf.summary.merge_all()
 
+# 训练模型存储
+saver = tf.train.Saver()
+
 with tf.Session() as sess:
     sess.run(init)
     # 将图写入制定目录
-    writer = tf.summary.FileWriter('./logs/', sess.graph)
+    writer = tf.summary.FileWriter('./logs/CNN_PCA/', sess.graph)
     for i in range(801):
         for batch in range(n_batch):
             # 训练模型
@@ -263,7 +266,8 @@ with tf.Session() as sess:
         writer.add_summary(summary, i)
         test_acc = sess.run(accuracy, feed_dict={x: data_band_test, y: data_label_test, keep_prob: 1.0})
         print("Training Times：" + str(i) + " , Testing Accuracy = " + str(test_acc))
-
+    # 保存模型
+    saver.save(sess, 'net/CNN_PCA/CNN_PCA.ckpt')
 '''
     ...
     Training Times：790 , Testing Accuracy = 0.9816667
