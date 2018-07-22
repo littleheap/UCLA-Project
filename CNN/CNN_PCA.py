@@ -270,15 +270,15 @@ with tf.Session() as sess:
     saver.save(sess, 'net/CNN_PCA/CNN_PCA.ckpt')
 '''
     ...
-    Training Times：790 , Testing Accuracy = 0.9816667
-    Training Times：791 , Testing Accuracy = 0.985
-    Training Times：792 , Testing Accuracy = 0.9816667
-    Training Times：793 , Testing Accuracy = 0.9811111
-    Training Times：794 , Testing Accuracy = 0.985
-    Training Times：795 , Testing Accuracy = 0.985
-    Training Times：796 , Testing Accuracy = 0.98388886
-    Training Times：797 , Testing Accuracy = 0.985
-    Training Times：798 , Testing Accuracy = 0.98444444
-    Training Times：799 , Testing Accuracy = 0.985
-    Training Times：800 , Testing Accuracy = 0.98388886
+    Training Times：790 , Testing Accuracy = 0.98777777
+    Training Times：791 , Testing Accuracy = 0.9872222
+    Training Times：792 , Testing Accuracy = 0.98777777
+    Training Times：793 , Testing Accuracy = 0.98777777
+    Training Times：794 , Testing Accuracy = 0.98777777
+    Training Times：795 , Testing Accuracy = 0.98777777
+    Training Times：796 , Testing Accuracy = 0.98777777
+    Training Times：797 , Testing Accuracy = 0.98777777
+    Training Times：798 , Testing Accuracy = 0.98777777
+    Training Times：799 , Testing Accuracy = 0.9872222
+    Training Times：800 , Testing Accuracy = 0.98777777
 '''

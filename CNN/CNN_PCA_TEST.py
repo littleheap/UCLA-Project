@@ -1,21 +1,20 @@
 import random
 import pandas as pd
 import tensorflow as tf
+from sklearn.decomposition import PCA
 
 '''
     实现基础CNN网络
 '''
-# 每个批次的大小
-batch_size = 100
 
-# 计算一共有多少个训练批次遍历一次训练集
-n_batch = 1800 // batch_size  # 18
-
-# 制作1800全集验证集，此处与测试集取同
+# 制作1800全集验证集，此处与测试集取同，PCA降维至100特征
 # 获取特征矩阵
 data_band_test = pd.read_csv('./dataset/CNN_data_shuffle.csv', header=None)
 data_band_test = data_band_test.as_matrix()
 data_band_test = data_band_test[:, :-1]
+
+pca = PCA(n_components=100)
+data_band_test = pca.fit_transform(data_band_test)
 data_band_test = data_band_test[:, :100]
 # print(data_band_test.shape)  # (1800, 100)
 
@@ -54,48 +53,15 @@ def bias_variable(shape, name):
 
 # 卷积层
 def conv2d(x, W):
-    '''
-    x是一个四维的tensor [batch, in_height, in_width, in_channels]
-    (1)批次  (2)图片高  (3)图片宽  (4)通道数：黑白为1，彩色为3
-
-    W是一个滤波器/卷积核 [filter_height, filter_width, in_channels, out_channels]
-    (1)滤波器高  (2)滤波器宽  (3)输入通道数  (4)输出通道数
-
-    约定 strides[0] = strides[3] = 1， strides[1]代表x方向的步长，strides[2]代表y方向的步长
-
-    padding= 'SAME' / 'VALID' ; SAME在外围适当补0 , VALID不填补0
-    '''
     return tf.nn.conv2d(x, W, strides=[1, 1, 1, 1], padding='SAME')
 
 
 # 池化层
 def max_pool_2x2_first(x):
-    '''
-    x是一个四维的tensor [batch, in_height, in_width, in_channels]
-    (1)批次  (2)图片高  (3)图片宽  (4)通道数：黑白为1，彩色为3
-
-    ksize是窗口大小
-    约定 ksize[0] = ksize[3] = 1，ksize[1]代表x方向的大小 , ksize[2]代表y方向的大小
-
-    约定 strides[0] = strides[3] = 1，strides[1]代表x方向的步长，strides[2]代表y方向的步长
-
-    padding= 'SAME' / 'VALID' ; SAME在外围适当补0 , VALID不填补0
-    '''
     return tf.nn.max_pool(x, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
 
 
 def max_pool_2x2_second(x):
-    '''
-    x是一个四维的tensor [batch, in_height, in_width, in_channels]
-    (1)批次  (2)图片高  (3)图片宽  (4)通道数：黑白为1，彩色为3
-
-    ksize是窗口大小
-    约定 ksize[0] = ksize[3] = 1，ksize[1]代表x方向的大小 , ksize[2]代表y方向的大小
-
-    约定 strides[0] = strides[3] = 1，strides[1]代表x方向的步长，strides[2]代表y方向的步长
-
-    padding= 'SAME' / 'VALID' ; SAME在外围适当补0 , VALID不填补0
-    '''
     return tf.nn.max_pool(x, ksize=[1, 2, 2, 1], strides=[1, 1, 1, 1], padding='VALID')
 
 
@@ -105,10 +71,6 @@ with tf.name_scope('input'):
     x = tf.placeholder(tf.float32, [None, 100], name='x-input')
     y = tf.placeholder(tf.float32, [None, 10], name='y-input')
     with tf.name_scope('x_image'):
-        '''
-        改变x的格式转为2维的向量 [batch, in_height, in_width, in_channels] 
-        (1)批次  (2)二维高  (3)二维宽  (4)通道数：黑白为1，彩色为3
-        '''
         x_image = tf.reshape(x, [-1, 10, 10, 1], name='x_image')
 
 # 第一层：卷积+激活+池化
@@ -146,10 +108,6 @@ with tf.name_scope('Conv2'):
         h_conv2 = tf.nn.relu(conv2d_2)
     with tf.name_scope('h_pool2'):
         h_pool2 = max_pool_2x2_second(h_conv2)  # 进行max-pooling
-
-# 10*10的图片第一次卷积后还是10*10，第一次池化后变为5*5
-# 第二次卷积后为5*5，第二次池化后变为了4*4
-# 进过上面操作后得到64张4*4的平面
 
 with tf.name_scope('fc1'):
     # 初始化第一个全连接层的权值
@@ -213,6 +171,9 @@ with tf.name_scope('accuracy'):
 data_band = pd.read_csv('./dataset/CNN_data_shuffle.csv', header=None)
 data_band = data_band.as_matrix()
 data_band = data_band[:, :-1]
+# PCA降维至100特征
+pca = PCA(n_components=100)
+data_band = pca.fit_transform(data_band)
 # print(data_band.shape)  # (1800, 103)
 
 # 获取标记onehot矩阵
@@ -235,44 +196,11 @@ def get_random_100():
     return random_100
 
 
-# 初始化变量
-init = tf.global_variables_initializer()
-
-# 合并所有的Summary
-merge = tf.summary.merge_all()
-
 # 训练模型存储
 saver = tf.train.Saver()
 
 with tf.Session() as sess:
-    sess.run(init)
-    # 将图写入制定目录
-    writer = tf.summary.FileWriter('./logs/CNN/', sess.graph)
-    for i in range(801):
-        for batch in range(n_batch):
-            # 训练模型
-            random_100 = get_random_100()
-            batch_xs = data_band[random_100][:, :100]
-            batch_ys = data_label[random_100]
-            summary, _ = sess.run([merge, train_step],
-                                  feed_dict={x: batch_xs, y: batch_ys, keep_prob: 0.8})  # dropout比例
-        writer.add_summary(summary, i)
-        test_acc = sess.run(accuracy, feed_dict={x: data_band_test, y: data_label_test, keep_prob: 1.0})
-        print("Training Times：" + str(i) + " , Testing Accuracy = " + str(test_acc))
-    # 保存模型
-    saver.save(sess, 'net/CNN/CNN.ckpt')
-
-'''
-    ...
-    Training Times：790 , Testing Accuracy = 0.98777777
-    Training Times：791 , Testing Accuracy = 0.985
-    Training Times：792 , Testing Accuracy = 0.9866667
-    Training Times：793 , Testing Accuracy = 0.9855555
-    Training Times：794 , Testing Accuracy = 0.9866667
-    Training Times：795 , Testing Accuracy = 0.98777777
-    Training Times：796 , Testing Accuracy = 0.98444444
-    Training Times：797 , Testing Accuracy = 0.98333335
-    Training Times：798 , Testing Accuracy = 0.98055553
-    Training Times：799 , Testing Accuracy = 0.9855555
-    Training Times：800 , Testing Accuracy = 0.9872222
-'''
+    saver.restore(sess, 'net/CNN_PCA/CNN_PCA.ckpt')
+    test_acc = sess.run(accuracy, feed_dict={x: data_band_test, y: data_label_test, keep_prob: 1.0})
+    print("Testing Accuracy = " + str(test_acc))
+    # >>>Testing Accuracy = 0.98777777
