@@ -11,20 +11,21 @@ batch_size = 100
 # 计算一共有多少个训练批次遍历一次训练集
 n_batch = 1800 // batch_size  # 18
 
-# 制作1800全集验证集，此处与测试集取同
-# 获取特征矩阵
-data_band_test = pd.read_csv('./dataset/CNN_data_shuffle.csv', header=None)
-data_band_test = data_band_test.as_matrix()
-data_band_test = data_band_test[:, :-1]
-data_band_test = data_band_test[:, :100]
-# print(data_band_test.shape)  # (1800, 100)
+# test测试集
+data_test = pd.read_csv('./dataset/new_CNN_test_data_shuffle.csv', header=None)
+data_test = data_test.as_matrix()
 
-# 获取标记onehot矩阵
-data_label_test = pd.read_csv('./dataset/CNN_data_shuffle_onehot_label.csv', header=None)
-data_label_test = data_label_test.as_matrix()
+# 获取test特征矩阵
+data_test_band = data_test[:, :-1]
+print(data_test_band.shape)  # (40976, 103)
+# 取前100个通道
+data_test_band = data_test_band[:, :100]
+print(data_test_band.shape)  # (40976, 100)
 
-
-# print(data_label_test.shape)  # (1800, 10)
+# 获取test标记onehot矩阵
+data_test_label = pd.read_csv('./dataset/new_CNN_test_data_shuffle_label_onehot.csv', header=None)
+data_test_label = data_test_label.as_matrix()
+print(data_test_label.shape)  # (40976, 10)
 
 
 # 参数概要
@@ -209,29 +210,27 @@ with tf.name_scope('accuracy'):
         accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
         tf.summary.scalar('accuracy', accuracy)
 
-# 获取特征矩阵
-data_band = pd.read_csv('./dataset/CNN_data_shuffle.csv', header=None)
-data_band = data_band.as_matrix()
-data_band = data_band[:, :-1]
-# print(data_band.shape)  # (1800, 103)
+# train训练集
+data_train = pd.read_csv('./dataset/new_CNN_train_data_shuffle.csv', header=None)
+data_train = data_train.as_matrix()
 
-# 获取标记onehot矩阵
-data_label = pd.read_csv('./dataset/CNN_data_shuffle_onehot_label.csv', header=None)
-data_label = data_label.as_matrix()
+# 获取train特征矩阵
+data_train_band = data_train[:, :-1]
+print(data_train_band.shape)  # (1800, 103)
+
+# 获取train标记onehot矩阵
+data_train_label = pd.read_csv('./dataset/new_CNN_train_data_shuffle_label_onehot.csv', header=None)
+data_train_label = data_train_label.as_matrix()
+print(data_train_label.shape)  # (1800, 10)
 
 
-# print(data_label.shape)  # (1800, 10)
-
-
-# 获取0-1800之间100个随机数用于选取训练集batch
+# 获取100个1800以内的随机数
 def get_random_100():
     random_100 = []
     while (len(random_100) < 100):
         x = random.randint(0, 1799)
         if x not in random_100:
             random_100.append(x)
-    # print(random_100)
-    # print(len(random_100))
     return random_100
 
 
@@ -247,32 +246,17 @@ saver = tf.train.Saver()
 with tf.Session() as sess:
     sess.run(init)
     # 将图写入制定目录
-    writer = tf.summary.FileWriter('./logs/CNN/', sess.graph)
-    for i in range(801):
+    writer = tf.summary.FileWriter('./logs/newCNN/', sess.graph)
+    for i in range(601):
         for batch in range(n_batch):
             # 训练模型
             random_100 = get_random_100()
-            batch_xs = data_band[random_100][:, :100]
-            batch_ys = data_label[random_100]
+            batch_xs = data_train_band[random_100][:, :100]
+            batch_ys = data_train_label[random_100]
             summary, _ = sess.run([merge, train_step],
-                                  feed_dict={x: batch_xs, y: batch_ys, keep_prob: 0.8})  # dropout比例
+                                  feed_dict={x: batch_xs, y: batch_ys, keep_prob: 0.7})  # dropout比例
         writer.add_summary(summary, i)
-        test_acc = sess.run(accuracy, feed_dict={x: data_band_test, y: data_label_test, keep_prob: 1.0})
+        test_acc = sess.run(accuracy, feed_dict={x: data_test_band, y: data_test_label, keep_prob: 1.0})
         print("Training Times：" + str(i) + " , Testing Accuracy = " + str(test_acc))
     # 保存模型
-    saver.save(sess, 'net/CNN/CNN.ckpt')
-
-'''
-    ...
-    Training Times：790 , Testing Accuracy = 0.98777777
-    Training Times：791 , Testing Accuracy = 0.985
-    Training Times：792 , Testing Accuracy = 0.9866667
-    Training Times：793 , Testing Accuracy = 0.9855555
-    Training Times：794 , Testing Accuracy = 0.9866667
-    Training Times：795 , Testing Accuracy = 0.98777777
-    Training Times：796 , Testing Accuracy = 0.98444444
-    Training Times：797 , Testing Accuracy = 0.98333335
-    Training Times：798 , Testing Accuracy = 0.98055553
-    Training Times：799 , Testing Accuracy = 0.9855555
-    Training Times：800 , Testing Accuracy = 0.9872222
-'''
+    saver.save(sess, 'net/newCNN/newCNN.ckpt')
