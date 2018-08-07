@@ -277,3 +277,16 @@ with tf.Session() as sess:
         print("Training Iters：" + str(i) + " , Testing Accuracy = " + str(test_acc))
     # 保存模型
     saver.save(sess, 'net/newCNN_PCA/newCNN.ckpt')
+
+'''
+    Training Iters：591 , Testing Accuracy = 0.8083024
+    Training Iters：592 , Testing Accuracy = 0.80864406
+    Training Iters：593 , Testing Accuracy = 0.7968079
+    Training Iters：594 , Testing Accuracy = 0.803031
+    Training Iters：595 , Testing Accuracy = 0.8044465
+    Training Iters：596 , Testing Accuracy = 0.8083024
+    Training Iters：597 , Testing Accuracy = 0.8128173
+    Training Iters：598 , Testing Accuracy = 0.7951972
+    Training Iters：599 , Testing Accuracy = 0.8094738
+    Training Iters：600 , Testing Accuracy = 0.8097667
+'''
