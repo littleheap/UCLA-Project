@@ -254,7 +254,7 @@ print('totally cost', time_end - time_start)
 # cv2.destroyAllWindows()
 #
 # # 存储图片
-# cv2.imwrite('./images/paviaU_gt_WrongClass.png', single_merged)
+# cv2.imwrite('./images/SVM_WrongClass.png', single_merged)
 
 ''' 
     ################################################################

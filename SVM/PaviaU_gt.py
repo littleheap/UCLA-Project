@@ -69,7 +69,7 @@ cv2.waitKey(0)
 cv2.destroyAllWindows()
 
 # 存储图片
-cv2.imwrite('../images/paviaU_gt.png', multi_merged)
+cv2.imwrite('../images/paviaU.png', multi_merged)
 
 # 单颜色（黄色）显示标记图片
 
@@ -134,4 +134,4 @@ cv2.waitKey(0)
 cv2.destroyAllWindows()
 
 # 存储图片
-cv2.imwrite('../images/paviaU_gt.png', single_merged)
+cv2.imwrite('../images/paviaU.png', single_merged)
