@@ -17,10 +17,10 @@ import pandas as pd
     此程序中将连通的错误分类像素，外围一致情况下，与外围协同分类
 '''
 # 读取原始图片paviaU
-input_image = loadmat('../dataset/PaviaU.mat')['paviaU']
+input_image = loadmat('../dataset/origin/PaviaU.mat')['paviaU']
 
 # 读取标记图片paviaU_gt
-output_image = loadmat('../dataset/PaviaU_gt.mat')['paviaU_gt']  # (610, 340)
+output_image = loadmat('../dataset/origin/PaviaU_gt.mat')['paviaU_gt']  # (610, 340)
 
 # 导入gt数据集
 pavia_gt = pd.read_csv('../dataset/PaviaU_gt_band_label_loc.csv', header=None)
@@ -95,7 +95,7 @@ def return_4loc(loc):
 time_start = time.time()
 
 # 加载模型
-model = joblib.load('../models/PaviaU/SVC_CV.m')
+model = joblib.load('./models/SVC.m')
 
 # 预测gt全集
 pred = model.predict(pavia_gt_content)
@@ -103,14 +103,14 @@ pred = model.predict(pavia_gt_content)
 # print(pred.shape)  # (42776,)
 
 # 计算gt全集精度
-show_accuracy(pred, pavia_gt_label, 'SVC_CV')
+show_accuracy(pred, pavia_gt_label, 'SVC')  # 97.05 %
 
 # 查找gt错误分类坐标
 wrong_loc = return_wrong(pred, pavia_gt_label)
 # 临时保存wrong_loc
 temp_wrong_loc = return_wrong(pred, pavia_gt_label)
-print(wrong_loc)
-print(len(wrong_loc))  # 1627
+# print(wrong_loc)
+print(len(wrong_loc))  # 1264
 
 # gt{位置:类别}字典
 dic_loc = dict()
@@ -202,6 +202,7 @@ def mani(loc, flag):
     for bound_loc in unionbound_set:
         bound_band = dic_band[bound_loc]
         bound_pred = model.predict([bound_band])
+        # 此处classes开的是集合，利用无重复性质
         classes.add(int(bound_pred))
     # 如果边缘集合元素都属于一类，则说明该连通区域位于标记数据集内部
     if len(classes) == 1:
@@ -225,12 +226,12 @@ for i in range(iter_times):
         unionbound_set.clear()
 
 new_acc = '%.4f' % ((42776 - iter_times + len(change_list)) / 42776)
-print('新正确率：', float(new_acc) * 100, '%')  # 98.38 %（又提升了1%）
-print(len(change_list))  # 934
+print('新正确率：', float(new_acc) * 100, '%')  # 新正确率： 98.74 %
+print(len(change_list))  # 724
 print(change_list)
 
 time_end = time.time()
-print('total time：', time_end - time_start)
+print('total time：', time_end - time_start)  # 28.3s
 
 '''
     #######
@@ -238,16 +239,16 @@ print('total time：', time_end - time_start)
     #######
 '''
 # 读取标记图片paviaU_gt
-output_image = loadmat('../dataset/PaviaU_gt.mat')['paviaU_gt']  # (610, 340)
+output_image = loadmat('../dataset/origin/PaviaU_gt.mat')['paviaU_gt']  # (610, 340)
 
 # 单颜色（黄色）显示标记图片
 
 # 初始化个通道，用于生成新的paviaU_gt
-c1 = loadmat('../dataset/PaviaU_gt.mat')['paviaU_gt']
+c1 = loadmat('../dataset/origin/PaviaU_gt.mat')['paviaU_gt']
 
-c2 = loadmat('../dataset/PaviaU_gt.mat')['paviaU_gt']
+c2 = loadmat('../dataset/origin/PaviaU_gt.mat')['paviaU_gt']
 
-c3 = loadmat('../dataset/PaviaU_gt.mat')['paviaU_gt']
+c3 = loadmat('../dataset/origin/PaviaU_gt.mat')['paviaU_gt']
 
 # 现将全部分类坐标用黄色标记
 for i in range(610):

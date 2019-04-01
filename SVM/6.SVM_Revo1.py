@@ -17,14 +17,15 @@ import pandas as pd
     考虑用围棋吃子的思想，如果某一像素的上下左右全部为一个分类，则将该像素重新协同分类
 '''
 # 读取原始图片paviaU
-input_image = loadmat('../dataset/PaviaU.mat')['paviaU']
+input_image = loadmat('../dataset/origin/PaviaU.mat')['paviaU']
 
 # 读取标记图片paviaU_gt
-output_image = loadmat('../dataset/PaviaU_gt.mat')['paviaU_gt']  # (610, 340)
+output_image = loadmat('../dataset/origin/PaviaU_gt.mat')['paviaU_gt']  # (610, 340)
 
 # 导入gt数据集
 pavia_gt = pd.read_csv('../dataset/PaviaU_gt_band_label_loc.csv', header=None)
 pavia_gt = pavia_gt.as_matrix()
+
 # 获取特征矩阵
 pavia_gt_content = pavia_gt[:, :-2]
 # 获取标记矩阵
@@ -35,6 +36,7 @@ pavia_gt_loc = pavia_gt[:, -1]
 # 导入全部数据集
 pavia = pd.read_csv('../dataset/PaviaU_band_label_loc.csv', header=None)
 pavia = pavia.as_matrix()
+
 # 获取通道矩阵
 pavia_content = pavia[:, :-2]
 # 获取标记矩阵
@@ -72,7 +74,7 @@ def return_wrong(a, b):
 time_start = time.time()
 
 # 加载模型
-model = joblib.load('../models/PaviaU/SVC_CV.m')
+model = joblib.load('./models/SVC.m')
 
 # 预测gt全集
 pred = model.predict(pavia_gt_content)
@@ -80,18 +82,18 @@ pred = model.predict(pavia_gt_content)
 # print(pred.shape)  # (42776,)
 
 # 计算gt全集精度
-show_accuracy(pred, pavia_gt_label, 'SVC_CV')
+show_accuracy(pred, pavia_gt_label, 'SVC')
 
 # 查找gt错误分类坐标
 wrong_loc = return_wrong(pred, pavia_gt_label)
 # print(wrong_loc)
-# print(len(wrong_loc))  # 1627
+print(len(wrong_loc))  # 1264
 
 # gt{位置:类别}字典
 dic_loc = dict()
 for cur in pavia_gt:
     dic_loc[int(cur[-1])] = int(cur[-2])
-# print(len(dic_loc))  # 42776
+print(len(dic_loc))  # 42776
 # print(dic_loc)
 
 # gt{位置:通道}字典
@@ -122,9 +124,10 @@ for loc in wrong_loc:
     # right
     i_right = i
     j_right = j + 1
+    # 如果当前计算的像素不在原图尺寸范围内，说明越界无效，不作考虑
     if i_up < 0 or i_down > 609 or j_left < 0 or j_right > 339:
         continue
-    # 统计上下左右四个类别
+    # 计算上下左右四个像素的位置序号
     up_loc = i_up * 340 + j_up
     down_loc = i_down * 340 + j_down
     left_loc = i_left * 340 + j_left
@@ -146,7 +149,9 @@ for loc in wrong_loc:
     # print([up_pred, down_pred, left_pred, right_pred], [up_pred == down_pred == left_pred == right_pred])
     # 当预测错误的坐标上下左右预测都一致时，将此坐标的原有预测值更新为上下左右一致对的预测值
     if up_pred == down_pred == left_pred == right_pred:
+        # 预计将当前中心像素协同的结果，此处取了上方像素的判定结果
         cur_pred = int(up_pred)
+        # 当前中心像素真实标记label值
         cur_label = pavia_label[int(loc)]
         # print([cur_pred, cur_label])
         # 如果通过该方式修正的像素确实修正正确，那么记录到修正的记录中
@@ -155,12 +160,12 @@ for loc in wrong_loc:
             change_list.append(int(loc))
 
 new_acc = '%.4f' % ((42776 - len(wrong_loc) + change_num) / 42776)
-print('新正确率：', float(new_acc) * 100, '%')  # 0.9700（提升了1%）
-print(change_num)  # 342
-print(change_list)
+print('新正确率：', float(new_acc) * 100, '%')  # 新正确率： 97.71 %
+print(change_num)  # 285
+# print(change_list)
 
 time_end = time.time()
-print('total time：', time_end - time_start)
+print('total time：', time_end - time_start)  # 25.9s
 
 '''
     #######
@@ -168,16 +173,16 @@ print('total time：', time_end - time_start)
     #######
 '''
 # 读取标记图片paviaU_gt
-output_image = loadmat('../dataset/PaviaU_gt.mat')['paviaU_gt']  # (610, 340)
+output_image = loadmat('../dataset/origin/PaviaU_gt.mat')['paviaU_gt']  # (610, 340)
 
 # 单颜色（黄色）显示标记图片
 
 # 初始化个通道，用于生成新的paviaU_gt
-c1 = loadmat('../dataset/PaviaU_gt.mat')['paviaU_gt']
+c1 = loadmat('../dataset/origin/PaviaU_gt.mat')['paviaU_gt']
 
-c2 = loadmat('../dataset/PaviaU_gt.mat')['paviaU_gt']
+c2 = loadmat('../dataset/origin/PaviaU_gt.mat')['paviaU_gt']
 
-c3 = loadmat('../dataset/PaviaU_gt.mat')['paviaU_gt']
+c3 = loadmat('../dataset/origin/PaviaU_gt.mat')['paviaU_gt']
 
 # 现将全部分类坐标用黄色标记
 for i in range(610):
