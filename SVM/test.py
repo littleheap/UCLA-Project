@@ -1,5 +1,6 @@
 from sklearn import preprocessing
 import numpy as np
+import pandas as pd
 
 # preprocessing.StandardScaler().fit_transform(X[:, :])操作示意
 X = np.array([[1., -1., 2.],
@@ -14,3 +15,13 @@ print(X_scaled)
 '''
 print(X_scaled.mean(axis=0))  # [0. 0. 0.]
 print(X_scaled.std(axis=0))  # [1. 1. 1.]
+
+print([5])
+
+li = list()
+
+li.extend([5])
+li.extend([6])
+
+print(li[0])
+
