@@ -15,6 +15,7 @@ from sklearn import datasets, decomposition, manifold
     4）对M进行特征值分解，取其最小的n'个特征值对应的特征向量，即得到样本集在低维空间中的矩阵Z
 '''
 
+
 def load_data():
     iris = datasets.load_iris()
     return iris.data, iris.target
@@ -38,8 +39,8 @@ def plot_LocallyLinearEmbedding_k(*data):
         X_r = lle.fit_transform(X)
         ax = fig.add_subplot(2, 2, i + 1)
         colors = (
-        (1, 0, 0), (0, 1, 0), (0, 0, 1), (0.5, 0.5, 0), (0, 0.5, 0.5), (0.5, 0, 0.5), (0.4, 0.6, 0), (0.6, 0.4, 0),
-        (0, 0.6, 0.4), (0.5, 0.3, 0.2),)
+            (1, 0, 0), (0, 1, 0), (0, 0, 1), (0.5, 0.5, 0), (0, 0.5, 0.5), (0.5, 0, 0.5), (0.4, 0.6, 0), (0.6, 0.4, 0),
+            (0, 0.6, 0.4), (0.5, 0.3, 0.2),)
         for label, color in zip(np.unique(Y), colors):
             position = Y == label
             ax.scatter(X_r[position, 0], X_r[position, 1], label="target=%d" % label, color=color)
