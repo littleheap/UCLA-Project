@@ -92,6 +92,9 @@ accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))  # 把correct
 # 初始化
 init = tf.global_variables_initializer()
 
+# 训练模型存储
+saver = tf.train.Saver()
+
 # 获取100个1800以内的随机数
 def get_random_100():
     random_100 = []
@@ -103,7 +106,7 @@ def get_random_100():
 
 with tf.Session() as sess:
     sess.run(init)
-    for epoch in range(1000):
+    for epoch in range(340):
         for batch in range(n_batch):
             random_100 = get_random_100()
             batch_xs = data_train_band[random_100][:, :100]
@@ -122,3 +125,6 @@ with tf.Session() as sess:
             Iter 345, Testing Accuracy= 0.7029481
             Iter 346, Testing Accuracy= 0.7077802
         '''
+    # 保存模型
+    saver.save(sess, './models/LSTM.ckpt')
+

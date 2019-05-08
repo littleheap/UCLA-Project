@@ -25,3 +25,29 @@ li.extend([6])
 
 print(li[0])
 
+print('================')
+
+mark = []
+
+for i in range(100):
+    mark.append(i)
+
+print(mark)
+
+mark.remove(0)
+mark.remove(1)
+
+print(mark)
+
+print(0 in mark)
+
+print(5 in mark)
+
+print('===============')
+
+a = set()
+a.add(1)
+a.add(2)
+a.add(1)
+print(a)
+print(len(a))
