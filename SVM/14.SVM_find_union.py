@@ -5,10 +5,13 @@ import pandas as pd
 import numpy as np
 import tensorflow as tf
 
-pred = pd.read_csv('../dataset/test.csv', header=None)
+pred = pd.read_csv('../dataset/test1.csv', header=None)
 preds = pred.values
 
 print(pred.shape)  # (6, 5)
+
+row = pred.shape[0]  # 6
+col = pred.shape[1]  # 5
 
 pred = np.transpose(pred)
 
@@ -28,7 +31,7 @@ def return_4loc(i, j):
     i_right = i
     j_right = j + 1
     # 超出边界的像素返回四个FALSE
-    if i_up < 0 or i_down > 5 or j_left < 0 or j_right > 4:
+    if i_up < 0 or i_down > (row - 1) or j_left < 0 or j_right > (col - 1):
         return False, False, False, False
     else:
         # 否则返回四个坐标
@@ -44,16 +47,17 @@ unionbound_set = set()
 # 记录当前中心位置和对应联通区域大小的字典
 union_size = dict()
 
-#
+# 判断是否边界触及边界
 flag = True
 
+done_set = set()
 
 # 连通区域递归函数，传入中心目标像素的二维坐标（x，y）
 def mani(i, j):
     # 记录当前中心像素的判定结果
     current_pred = pred[i][j]
     # 二维坐标换算一维坐标值备用
-    loc = i * 5 + j
+    loc = i * col + j
 
     # 获取当前元素上下左右四个二维坐标
     up, down, left, right = return_4loc(i, j)
@@ -76,10 +80,10 @@ def mani(i, j):
     i_right = right[0]
     j_right = right[1]
     # 统计上下左右四个的一维坐标
-    up_loc = i_up * 5 + j_up
-    down_loc = i_down * 5 + j_down
-    left_loc = i_left * 5 + j_left
-    right_loc = i_right * 5 + j_right
+    up_loc = i_up * col + j_up
+    down_loc = i_down * col + j_down
+    left_loc = i_left * col + j_left
+    right_loc = i_right * col + j_right
     # 如果当前像素，对应的上下左右四个像素有一个不在gt标记范围内，就暂时跳过，这说明该像素在边缘
     if pred[i_up][j_up] == 0 or pred[i_down][j_down] == 0 or pred[i_left][j_left] == 0 or pred[i_right][
         j_right] == 0:
@@ -101,8 +105,8 @@ def mani(i, j):
         unionbound_set.add(right_loc)
 
     for pix in list(unionbound_set):
-        i_pix = pix // 5
-        j_pix = pix % 5
+        i_pix = pix // col
+        j_pix = pix % col
         if pred[i_pix][j_pix] == current_pred:
             unionloc_set.add(pix)
             try:
@@ -118,8 +122,8 @@ def mani(i, j):
     # print(union_size)
 
 
-for i in range(6):
-    for j in range(5):
+for i in range(row):
+    for j in range(col):
         print((i, j))
         # 记录当前连通区域的一维坐标集合
         unionloc_set = set()
@@ -132,11 +136,8 @@ for i in range(6):
             if len(unionloc_set) < 20 and len(unionloc_set) != 0 and flag:
                 union_size[(i, j)] = len(unionloc_set)
                 for pix in unionloc_set:
-                    i_pix = pix // 5
-                    j_pix = pix % 5
+                    i_pix = pix // col
+                    j_pix = pix % col
                     pred[i_pix][j_pix] = 0
-
-            # unionloc_set.clear()
-            # unionbound_set.clear()
 
 print(union_size)
