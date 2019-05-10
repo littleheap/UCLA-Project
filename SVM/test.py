@@ -51,3 +51,32 @@ a.add(2)
 a.add(1)
 print(a)
 print(len(a))
+
+print('---------')
+
+
+def temp():
+    print(1)
+    return
+    print(2)
+
+
+temp()
+
+print('------------')
+
+test = set()
+
+test.add(1)
+test.add(2)
+test.add(3)
+
+for u in list(test):
+
+    if u == 1:
+        test.remove(1)
+
+print(test)
+
+test.clear()
+print(test)
