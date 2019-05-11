@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 import tensorflow as tf
 
-pred = pd.read_csv('../dataset/test1.csv', header=None)
+pred = pd.read_csv('../dataset/SVM_pred.csv', header=None)
 preds = pred.values
 
 print(pred.shape)  # (6, 5)
@@ -110,6 +110,10 @@ def mani(i, j):
     if right_loc not in unionloc_set:
         # unionbound_set.add(right_loc)
         unionbound_stack.append(right_loc)
+
+    # 限定联通面积阈值
+    # if len(unionloc_set) > 20:
+    #     return
 
     while len(unionbound_stack) != 0:
         # 弹出栈尾最后一个元素
